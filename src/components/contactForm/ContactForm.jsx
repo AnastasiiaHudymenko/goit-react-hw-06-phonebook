@@ -1,6 +1,9 @@
 import { Button } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string } from 'yup';
+import { nanoid } from 'nanoid';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
 
 let userSchema = object({
   number: string().required(),
@@ -8,9 +11,21 @@ let userSchema = object({
 });
 
 export const ContactForm = () => {
+  const dispatch = useDispatch();
+
+  const handlSubmit = (values, actions) => {
+    const newContact = {
+      id: nanoid(),
+      name: values.name,
+      number: values.number,
+    };
+    dispatch(addContact(newContact));
+    actions.resetForm();
+  };
+
   return (
     <Formik
-      onSubmit={(values, acrions) => console.log(values, acrions)}
+      onSubmit={handlSubmit}
       initialValues={{ name: '', number: '' }}
       validationSchema={userSchema}
     >
@@ -39,8 +54,6 @@ export const ContactForm = () => {
             className="form-control"
             id="numberInput"
             name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           />
           <ErrorMessage name="number">
             {msg => <div style={{ color: 'red' }}>{msg}</div>}
