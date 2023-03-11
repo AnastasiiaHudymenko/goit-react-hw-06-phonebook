@@ -1,12 +1,21 @@
 import { ListGroup, Button } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteContact } from '../../redux/contactsSlice';
 
 export const ContactsList = () => {
   const contacts = useSelector(state => state.contacts);
-  console.log(contacts);
+  const filter = useSelector(state => state.filter);
+  const dispatch = useDispatch();
+
+  const contactList = filter
+    ? contacts.filter(({ name }) =>
+        name.toLowerCase().includes(filter.toLowerCase())
+      )
+    : contacts;
+
   return (
     <ListGroup className="mt-4" as="ol" numbered>
-      {contacts.map(({ id, name, number }) => {
+      {contactList.map(({ id, name, number }) => {
         return (
           <ListGroup.Item
             key={id}
@@ -18,7 +27,13 @@ export const ContactsList = () => {
               <div className="fw-bold">{name}</div>
               {number}
             </div>
-            <Button variant="outline-danger">Delete</Button>
+            <Button
+              type="button"
+              onClick={() => dispatch(deleteContact(id))}
+              variant="outline-danger"
+            >
+              Delete
+            </Button>
           </ListGroup.Item>
         );
       })}

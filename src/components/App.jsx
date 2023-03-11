@@ -1,4 +1,6 @@
 import { Container, Row, Col } from 'react-bootstrap';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ContactForm } from './contactForm/ContactForm';
 import { Fillter } from './fillter/Fillter';
 import { ContactsList } from './contactsList/ContactsList';
@@ -30,6 +32,7 @@ export const App = () => {
           <ContactsList />
         </Col>
       </Row>
+      <ToastContainer />
     </Container>
   );
 };

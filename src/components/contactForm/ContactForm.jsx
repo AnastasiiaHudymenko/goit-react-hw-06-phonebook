@@ -2,7 +2,8 @@ import { Button } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, string } from 'yup';
 import { nanoid } from 'nanoid';
-import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/contactsSlice';
 
 let userSchema = object({
@@ -12,8 +13,18 @@ let userSchema = object({
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
 
   const handlSubmit = (values, actions) => {
+    const isContact = contacts.some(
+      ({ name }) => name.toLowerCase() === values.name.toLowerCase()
+    );
+    if (isContact) {
+      actions.resetForm();
+      return toast.error(`${values.name} is already in your contacts`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
     const newContact = {
       id: nanoid(),
       name: values.name,
